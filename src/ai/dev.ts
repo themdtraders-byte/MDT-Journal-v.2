@@ -3,7 +3,6 @@
 import { config } from 'dotenv';
 config();
 
-// All AI flow imports have been disabled to fix build issues.
 import '@/ai/flows/local-data-audit.ts';
 import '@/ai/flows/text-to-speech.ts';
 import '@/ai/flows/support-assistant.ts';
