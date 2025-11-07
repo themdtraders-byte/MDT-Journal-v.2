@@ -5,16 +5,18 @@ import { useSearchParams } from 'next/navigation';
 import { Suspense, useMemo } from 'react';
 import { useJournalStore } from '@/hooks/use-journal-store';
 import type { Trade, AnalysisCategory } from '@/types';
-import TablePage from '@/components/data/table/page';
+import DataTable from '@/components/data-table';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { getCriterionValue } from '@/components/custom-report-builder';
 
 function FilteredView() {
     const searchParams = useSearchParams();
-    const { allTrades, appSettings } = useJournalStore(state => ({
-        allTrades: state.journals.find(j => j.id === state.activeJournalId)?.trades || [],
-        appSettings: state.appSettings,
+    const { journals, activeJournalId, appSettings } = useJournalStore(state => ({
+        journals: state.journals.filter(j => j.id === state.activeJournalId),
+        activeJournalId: state.activeJournalId,
+        appSettings: state.appSettings
     }));
+    const allTrades = journals[0]?.trades || [];
 
     const title = searchParams.get('title') || 'Filtered View';
     const criteriaString = searchParams.get('criteria');
@@ -49,7 +51,7 @@ function FilteredView() {
                 </CardHeader>
             </Card>
             <div className="h-[75vh]">
-                <TablePage trades={filteredTrades} />
+                <DataTable trades={filteredTrades} />
             </div>
         </div>
     );
