@@ -1,0 +1,759 @@
+{
+  "entities": {
+    "UserProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserProfile",
+      "type": "object",
+      "description": "Represents a user profile in the MD Journal application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user profile."
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email address.",
+          "format": "email"
+        },
+        "username": {
+          "type": "string",
+          "description": "User's display name or username."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the user profile was created.",
+          "format": "date-time"
+        },
+        "lastLogin": {
+          "type": "string",
+          "description": "Timestamp indicating the user's last login.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "username",
+        "createdAt"
+      ]
+    },
+    "Journal": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Journal",
+      "type": "object",
+      "description": "Represents a trading journal for a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the journal."
+        },
+        "userProfileId": {
+          "type": "string",
+          "description": "Reference to UserProfile. (Relationship: UserProfile 1:N Journal)"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the journal (e.g., 'Real Account', 'Demo Account')."
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of journal (e.g., 'Demo', 'Real', 'Backtest')."
+        },
+        "initialDeposit": {
+          "type": "number",
+          "description": "Initial deposit amount for the journal."
+        },
+        "capital": {
+          "type": "number",
+          "description": "Current capital of the journal."
+        },
+        "balance": {
+          "type": "number",
+          "description": "Current balance of the journal (capital + profit/loss)."
+        },
+        "totalXp": {
+          "type": "number",
+          "description": "Total experience points earned in this journal."
+        },
+        "lastAlertDate": {
+          "type": "string",
+          "description": "Date of the last alert received for this journal.",
+          "format": "date-time"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the journal was created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userProfileId",
+        "title",
+        "type",
+        "initialDeposit",
+        "capital",
+        "balance",
+        "createdAt"
+      ]
+    },
+    "Trade": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Trade",
+      "type": "object",
+      "description": "Represents a single trade within a journal.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the trade."
+        },
+        "journalId": {
+          "type": "string",
+          "description": "Reference to Journal. (Relationship: Journal 1:N Trade)"
+        },
+        "openDate": {
+          "type": "string",
+          "description": "Date when the trade was opened."
+        },
+        "closeDate": {
+          "type": "string",
+          "description": "Date when the trade was closed."
+        },
+        "openTime": {
+          "type": "string",
+          "description": "Time when the trade was opened."
+        },
+        "closeTime": {
+          "type": "string",
+          "description": "Time when the trade was closed."
+        },
+        "pair": {
+          "type": "string",
+          "description": "Currency pair or asset traded (e.g., EURUSD, Gold)."
+        },
+        "strategyId": {
+          "type": "string",
+          "description": "Reference to Strategy. (Relationship: Strategy 1:N Trade)"
+        },
+        "direction": {
+          "type": "string",
+          "description": "Direction of the trade (Buy or Sell)."
+        },
+        "lotSize": {
+          "type": "number",
+          "description": "Lot size of the trade."
+        },
+        "entryPrice": {
+          "type": "number",
+          "description": "Entry price of the trade."
+        },
+        "closingPrice": {
+          "type": "number",
+          "description": "Closing price of the trade."
+        },
+        "stopLoss": {
+          "type": "number",
+          "description": "Stop loss price for the trade."
+        },
+        "takeProfit": {
+          "type": "number",
+          "description": "Take profit price for the trade."
+        },
+        "note": {
+          "type": "string",
+          "description": "Notes about the trade."
+        },
+        "auto": {
+          "type": "string",
+          "description": "Auto-calculated data for the trade (session, result, pips, etc.)."
+        }
+      },
+      "required": [
+        "id",
+        "journalId",
+        "openDate",
+        "closeDate",
+        "openTime",
+        "closeTime",
+        "pair",
+        "strategyId",
+        "direction",
+        "lotSize",
+        "entryPrice",
+        "closingPrice",
+        "stopLoss",
+        "takeProfit"
+      ]
+    },
+    "Strategy": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Strategy",
+      "type": "object",
+      "description": "Represents a trading strategy.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the strategy."
+        },
+        "journalId": {
+          "type": "string",
+          "description": "Reference to Journal. (Relationship: Journal 1:N Strategy)"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the strategy."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the strategy."
+        },
+        "rules": {
+          "type": "string",
+          "description": "Json object describing all of the rules for this strategy"
+        }
+      },
+      "required": [
+        "id",
+        "journalId",
+        "title",
+        "description"
+      ]
+    },
+    "NewsEvent": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "NewsEvent",
+      "type": "object",
+      "description": "Represents a news event that may impact trading decisions.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the news event."
+        },
+        "time": {
+          "type": "string",
+          "description": "Time of the news event."
+        },
+        "currency": {
+          "type": "string",
+          "description": "Currency affected by the news event (e.g., USD, EUR)."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the news event (e.g., 'Non-Farm Payrolls')."
+        },
+        "previous": {
+          "type": "number",
+          "description": "Previous value of the news event statistic."
+        },
+        "forecast": {
+          "type": "number",
+          "description": "Forecasted value of the news event statistic."
+        },
+        "actual": {
+          "type": "number",
+          "description": "Actual value of the news event statistic."
+        }
+      },
+      "required": [
+        "id",
+        "time",
+        "currency",
+        "name"
+      ]
+    },
+    "PairData": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "PairData",
+      "type": "object",
+      "description": "Represents data for a currency pair, including pip size and value.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the currency pair data."
+        },
+        "pair": {
+          "type": "string",
+          "description": "Currency pair (e.g., EURUSD)."
+        },
+        "pipSize": {
+          "type": "number",
+          "description": "Pip size for the currency pair."
+        },
+        "pipValue": {
+          "type": "number",
+          "description": "Pip value for the currency pair (per standard lot)."
+        }
+      },
+      "required": [
+        "id",
+        "pair",
+        "pipSize",
+        "pipValue"
+      ]
+    },
+    "Setting": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Setting",
+      "type": "object",
+      "description": "Represents a user-configurable application setting.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the setting."
+        },
+        "userProfileId": {
+          "type": "string",
+          "description": "Reference to UserProfile. (Relationship: UserProfile 1:N Setting)"
+        },
+        "key": {
+          "type": "string",
+          "description": "Key of the setting (e.g., 'theme', 'soundEnabled')."
+        },
+        "value": {
+          "type": "string",
+          "description": "Value of the setting (e.g., 'dark', 'true').  Stored as a string to accommodate different data types."
+        }
+      },
+      "required": [
+        "id",
+        "userProfileId",
+        "key",
+        "value"
+      ]
+    },
+    "Achievement": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Achievement",
+      "type": "object",
+      "description": "Represents a gamified achievement.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the achievement."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the achievement (e.g., 'First Trade', 'Win Streak')."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of how to unlock the achievement."
+        },
+        "points": {
+          "type": "number",
+          "description": "Points awarded for unlocking the achievement."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "points"
+      ]
+    },
+    "UserAchievement": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserAchievement",
+      "type": "object",
+      "description": "Represents the achievements unlocked by a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user achievement."
+        },
+        "userProfileId": {
+          "type": "string",
+          "description": "Reference to UserProfile. (Relationship: UserProfile 1:N UserAchievement)"
+        },
+        "achievementId": {
+          "type": "string",
+          "description": "Reference to Achievement. (Relationship: Achievement 1:N UserAchievement)"
+        },
+        "unlockedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the achievement was unlocked.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userProfileId",
+        "achievementId",
+        "unlockedAt"
+      ]
+    },
+    "ActionHistory": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ActionHistory",
+      "type": "object",
+      "description": "Represents a record of an action performed by the user, for undo/redo functionality.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the action history record."
+        },
+        "userProfileId": {
+          "type": "string",
+          "description": "Reference to UserProfile. (Relationship: UserProfile 1:N ActionHistory)"
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp indicating when the action was performed.",
+          "format": "date-time"
+        },
+        "actionType": {
+          "type": "string",
+          "description": "Type of action performed (e.g., 'CREATE_TRADE', 'UPDATE_SETTING')."
+        },
+        "entityType": {
+          "type": "string",
+          "description": "Type of entity affected by the action (e.g., 'Trade', 'Setting')."
+        },
+        "entityId": {
+          "type": "string",
+          "description": "Identifier of the entity affected by the action."
+        },
+        "oldValue": {
+          "type": "string",
+          "description": "Previous value of the entity (stored as JSON string)."
+        },
+        "newValue": {
+          "type": "string",
+          "description": "New value of the entity (stored as JSON string)."
+        }
+      },
+      "required": [
+        "id",
+        "userProfileId",
+        "timestamp",
+        "actionType",
+        "entityType",
+        "entityId"
+      ]
+    },
+    "Quote": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Quote",
+      "type": "object",
+      "description": "Represents a quote used for display on application startup.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the quote."
+        },
+        "text": {
+          "type": "string",
+          "description": "The text of the quote."
+        },
+        "author": {
+          "type": "string",
+          "description": "The author of the quote."
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "author"
+      ]
+    },
+    "LeaderboardTrader": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "LeaderboardTrader",
+      "type": "object",
+      "description": "Represents a trader on the leaderboard (imaginary or the user).",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the trader."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the trader."
+        },
+        "country": {
+          "type": "string",
+          "description": "Country of the trader."
+        },
+        "totalTrades": {
+          "type": "number",
+          "description": "Total number of trades logged by the trader."
+        },
+        "xp": {
+          "type": "number",
+          "description": "Total experience points accumulated by the trader."
+        },
+        "avgGain": {
+          "type": "number",
+          "description": "Average gain of the winning trades."
+        },
+        "avgLoss": {
+          "type": "number",
+          "description": "Average loss of the losing trades."
+        },
+        "winRate": {
+          "type": "number",
+          "description": "The percentage of winning trades."
+        },
+        "avgGrade": {
+          "type": "number",
+          "description": "Average discipline score."
+        },
+        "totalPoints": {
+          "type": "number",
+          "description": "Total points used for ranking."
+        },
+        "isUser": {
+          "type": "boolean",
+          "description": "Indicates whether this trader represents the current user."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "country",
+        "totalTrades",
+        "xp",
+        "avgGain",
+        "avgLoss",
+        "winRate",
+        "avgGrade",
+        "totalPoints"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "UserProfile",
+          "schema": {
+            "$ref": "#/backend/entities/UserProfile"
+          },
+          "description": "Collection of user profiles. Each document is keyed by the user's UID. Includes basic user information.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Auth UID of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/journals/{journalId}",
+        "definition": {
+          "entityName": "Journal",
+          "schema": {
+            "$ref": "#/backend/entities/Journal"
+          },
+          "description": "Subcollection of journals owned by a specific user. Includes journal-specific details and configurations. The 'userProfileId' field is denormalized for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Auth UID of the user who owns the journal."
+            },
+            {
+              "name": "journalId",
+              "description": "The unique ID of the journal."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/journals/{journalId}/trades/{tradeId}",
+        "definition": {
+          "entityName": "Trade",
+          "schema": {
+            "$ref": "#/backend/entities/Trade"
+          },
+          "description": "Subcollection of trades within a specific user's journal. The 'userProfileId' is denormalized from the parent Journal document for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Auth UID of the user who owns the trade."
+            },
+            {
+              "name": "journalId",
+              "description": "The unique ID of the parent journal."
+            },
+            {
+              "name": "tradeId",
+              "description": "The unique ID of the trade."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/journals/{journalId}/strategies/{strategyId}",
+        "definition": {
+          "entityName": "Strategy",
+          "schema": {
+            "$ref": "#/backend/entities/Strategy"
+          },
+          "description": "Subcollection of strategies within a specific user's journal. Includes strategy title, description, and rules. The 'userProfileId' is denormalized from the parent Journal document for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Auth UID of the user who owns the strategy."
+            },
+            {
+              "name": "journalId",
+              "description": "The unique ID of the parent journal."
+            },
+            {
+              "name": "strategyId",
+              "description": "The unique ID of the strategy."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/action_history/{actionHistoryId}",
+        "definition": {
+          "entityName": "ActionHistory",
+          "schema": {
+            "$ref": "#/backend/entities/ActionHistory"
+          },
+          "description": "Collection of action history records for a specific user. Tracks actions for undo/redo functionality. The 'userProfileId' field provides a direct association to the user for authorization.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Auth UID of the user who performed the action."
+            },
+            {
+              "name": "actionHistoryId",
+              "description": "The unique ID of the action history record."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/settings/{settingId}",
+        "definition": {
+          "entityName": "Setting",
+          "schema": {
+            "$ref": "#/backend/entities/Setting"
+          },
+          "description": "Collection of settings for a specific user. Includes user-configurable application settings. The 'userProfileId' field provides a direct association to the user for authorization.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Auth UID of the user."
+            },
+            {
+              "name": "settingId",
+              "description": "The unique ID of the setting."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/user_achievements/{userAchievementId}",
+        "definition": {
+          "entityName": "UserAchievement",
+          "schema": {
+            "$ref": "#/backend/entities/UserAchievement"
+          },
+          "description": "Collection of user achievements for a specific user. Links users to achievements they've unlocked. The 'userProfileId' field provides a direct association to the user for authorization.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Auth UID of the user."
+            },
+            {
+              "name": "userAchievementId",
+              "description": "The unique ID of the user achievement."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/news_events/{newsEventId}",
+        "definition": {
+          "entityName": "NewsEvent",
+          "schema": {
+            "$ref": "#/backend/entities/NewsEvent"
+          },
+          "description": "Collection of news events. This is a global collection accessible to all users.",
+          "params": [
+            {
+              "name": "newsEventId",
+              "description": "The unique ID of the news event."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/pair_data/{pairDataId}",
+        "definition": {
+          "entityName": "PairData",
+          "schema": {
+            "$ref": "#/backend/entities/PairData"
+          },
+          "description": "Collection of pair data (pip size, pip value). This is a global collection accessible to all users.",
+          "params": [
+            {
+              "name": "pairDataId",
+              "description": "The unique ID of the pair data."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/achievements/{achievementId}",
+        "definition": {
+          "entityName": "Achievement",
+          "schema": {
+            "$ref": "#/backend/entities/Achievement"
+          },
+          "description": "Collection of available achievements in the application. This is a global collection accessible to all users.",
+          "params": [
+            {
+              "name": "achievementId",
+              "description": "The unique ID of the achievement."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/quotes/{quoteId}",
+        "definition": {
+          "entityName": "Quote",
+          "schema": {
+            "$ref": "#/backend/entities/Quote"
+          },
+          "description": "Collection of quotes used in the application. This is a global collection accessible to all users.",
+          "params": [
+            {
+              "name": "quoteId",
+              "description": "The unique ID of the quote."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/leaderboard_traders/{leaderboardTraderId}",
+        "definition": {
+          "entityName": "LeaderboardTrader",
+          "schema": {
+            "$ref": "#/backend/entities/LeaderboardTrader"
+          },
+          "description": "Collection of leaderboard traders (imaginary and user). This is a global collection accessible to all users.",
+          "params": [
+            {
+              "name": "leaderboardTraderId",
+              "description": "The unique ID of the leaderboard trader."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to optimize for authorization independence, clarity, and scalability, adhering to DBAC principles. User data is primarily stored under the `/users/{userId}` path, providing clear ownership and simplifying security rules. Collaborative data, like that within a journal, is managed using membership maps denormalized to each document, eliminating the need for `get()` calls in security rules. Data segregation based on access needs is applied (e.g., user profiles vs. leaderboard data), allowing for homogeneous security postures within collections. \n\nThe structure achieves Authorization Independence by denormalizing ownership and membership information into subcollections. For example, the `Journal` documents have a `userProfileId` which allows to grant access based on the uid of the user associated with this journal, without needing a `get()` call to the parent `UserProfile`. Furthermore, nested entities such as `Trade`, `Strategy`, and `ActionHistory` are also stored under the `/users/{userId}` path, reinforcing the ownership. This facilitates atomic operations for data relevant to each user.\n\nTo support the QAPs:\n\n1.  **Secure List Operations:** The hierarchical path structure (`/users/{userId}/journals/{journalId}/trades/{tradeId}`) allows for straightforward security rules that grant access based on path-based ownership, ensuring that users can only list trades within their own journals.\n\n2.  **Preventing Unauthorized Access:** By storing user-specific data under their respective `userId`, the security rules can easily restrict access to only authenticated users with a matching `request.auth.uid`, preventing unauthorized data listing or access.\n\n3.  **Collaborative Data Handling:** Although the current design emphasizes personal journals, the future addition of collaborative features can be accommodated by adding a 'members' map to the Journal entity and denormalizing it, as specified in the design mandates, within the journal's subcollections (Trades, Strategies, etc.) if collaborative rules are required."
+  }
+}

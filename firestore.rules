@@ -1,0 +1,295 @@
+/**
+ * @file Firestore Security Rules for MD Journal Application
+ *
+ * @Core Philosophy: This ruleset enforces a strict user-ownership model for user-specific data,
+ * with public read access to certain global collections. All user-created data is nested under
+ * the /users/{userId} path and access is granted only to the authenticated user matching the {userId}.
+ * Public data (quotes, news events, etc.) is stored in top-level collections with open read access.
+ *
+ * @Data Structure:
+ * - /users/{userId}: Stores user profile information.
+ * - /users/{userId}/journals/{journalId}: Stores trading journals owned by a user.
+ * - /users/{userId}/journals/{journalId}/trades/{tradeId}: Stores individual trades within a journal.
+ * - /users/{userId}/journals/{journalId}/strategies/{strategyId}: Stores trading strategies within a journal.
+ * - /users/{userId}/action_history/{actionHistoryId}: Stores the user's action history for undo/redo functionality.
+ * - /users/{userId}/settings/{settingId}: Stores user-specific settings.
+ * - /users/{userId}/user_achievements/{userAchievementId}: Stores user's achievements.
+ * - /news_events/{newsEventId}: Stores global news events.
+ * - /pair_data/{pairDataId}: Stores global currency pair data.
+ * - /achievements/{achievementId}: Stores global achievement definitions.
+ * - /quotes/{quoteId}: Stores global quotes.
+ * - /leaderboard_traders/{leaderboardTraderId}: Stores leaderboard data.
+ *
+ * @Key Security Decisions:
+ * - User-specific data is strictly controlled by the user's UID.
+ * - Global collections (news_events, pair_data, achievements, quotes, leaderboard_traders) are publicly readable.
+ * - User listing is disallowed (there are no rules to list all users).
+ * - Data validation is relaxed for prototyping, focusing on ownership and relationships.
+ *
+ * @Denormalization for Authorization:
+ * - The `Journal` documents have a `userProfileId` which allows to grant access based on the uid of the user associated with this journal, without needing a `get()` call to the parent `UserProfile`.
+ * - Nested entities such as `Trade`, `Strategy`, and `ActionHistory` are also stored under the `/users/{userId}` path, reinforcing the ownership. This facilitates atomic operations for data relevant to each user.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Manages user profile access.  Users can only read and write their own profile.
+     * @path /users/{userId}
+     * @allow (create) - Authenticated user creates their own profile with matching UID.
+     * @allow (get, update, delete) - Authenticated user reads/updates/deletes their own profile with matching UID.
+     * @deny (create, update, delete) - Any unauthenticated request.
+     * @deny (get, list) - Any attempt by one user to read another user's profile.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Manages access to user journals.  Users can only access journals they own.
+     * @path /users/{userId}/journals/{journalId}
+     * @allow (create) - Authenticated user creates a journal under their profile.
+     * @allow (get, update, delete) - Authenticated user reads/updates/deletes their own journal.
+     * @deny (create, update, delete) - Any unauthenticated request.
+     * @deny (get, list) - Any attempt by one user to read another user's journal.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/journals/{journalId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Manages access to trades within a user's journal.  Users can only access trades in journals they own.
+     * @path /users/{userId}/journals/{journalId}/trades/{tradeId}
+     * @allow (create) - Authenticated user creates a trade under their journal.
+     * @allow (get, update, delete) - Authenticated user reads/updates/deletes their own trade.
+     * @deny (create, update, delete) - Any unauthenticated request.
+     * @deny (get, list) - Any attempt by one user to read another user's trade.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/journals/{journalId}/trades/{tradeId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Manages access to strategies within a user's journal.  Users can only access strategies in journals they own.
+     * @path /users/{userId}/journals/{journalId}/strategies/{strategyId}
+     * @allow (create) - Authenticated user creates a strategy under their journal.
+     * @allow (get, update, delete) - Authenticated user reads/updates/deletes their own strategy.
+     * @deny (create, update, delete) - Any unauthenticated request.
+     * @deny (get, list) - Any attempt by one user to read another user's strategy.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/journals/{journalId}/strategies/{strategyId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Manages access to action history records for a user.  Users can only access their own action history.
+     * @path /users/{userId}/action_history/{actionHistoryId}
+     * @allow (create) - Authenticated user creates an action history record under their profile.
+     * @allow (get, update, delete) - Authenticated user reads/updates/deletes their own action history record.
+     * @deny (create, update, delete) - Any unauthenticated request.
+     * @deny (get, list) - Any attempt by one user to read another user's action history record.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/action_history/{actionHistoryId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Manages access to user settings. Users can only access their own settings.
+     * @path /users/{userId}/settings/{settingId}
+     * @allow (create) - Authenticated user creates a setting under their profile.
+     * @allow (get, update, delete) - Authenticated user reads/updates/deletes their own setting.
+     * @deny (create, update, delete) - Any unauthenticated request.
+     * @deny (get, list) - Any attempt by one user to read another user's setting.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/settings/{settingId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Manages access to user achievements. Users can only access their own achievements.
+     * @path /users/{userId}/user_achievements/{userAchievementId}
+     * @allow (create) - Authenticated user creates an achievement under their profile.
+     * @allow (get, update, delete) - Authenticated user reads/updates/deletes their own achievement.
+     * @deny (create, update, delete) - Any unauthenticated request.
+     * @deny (get, list) - Any attempt by one user to read another user's achievement.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/user_achievements/{userAchievementId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Allows public read access to news events.
+     * @path /news_events/{newsEventId}
+     * @allow (get, list) - Any user can read news events.
+     * @deny (create, update, delete) - No user can create, update, or delete news events through client.
+     */
+    match /news_events/{newsEventId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+
+    /**
+     * @description Allows public read access to pair data.
+     * @path /pair_data/{pairDataId}
+     * @allow (get, list) - Any user can read pair data.
+     * @deny (create, update, delete) - No user can create, update, or delete pair data through client.
+     */
+    match /pair_data/{pairDataId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+
+    /**
+     * @description Allows public read access to achievements.
+     * @path /achievements/{achievementId}
+     * @allow (get, list) - Any user can read achievements.
+     * @deny (create, update, delete) - No user can create, update, or delete achievements through client.
+     */
+    match /achievements/{achievementId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+
+    /**
+     * @description Allows public read access to quotes.
+     * @path /quotes/{quoteId}
+     * @allow (get, list) - Any user can read quotes.
+     * @deny (create, update, delete) - No user can create, update, or delete quotes through client.
+     */
+    match /quotes/{quoteId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+
+    /**
+     * @description Allows public read access to leaderboard traders.
+     * @path /leaderboard_traders/{leaderboardTraderId}
+     * @allow (get, list) - Any user can read leaderboard traders.
+     * @deny (create, update, delete) - No user can create, update, or delete leaderboard traders through client.
+     */
+    match /leaderboard_traders/{leaderboardTraderId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+  }
+}

@@ -1,0 +1,141 @@
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 0%; /* #000000 */
+    --foreground: 0 0% 100%; /* #FFFFFF */
+    --card: 0 0% 10%; /* #1A1A1A */
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 3%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 48 100% 50%; /* #FFD200 */
+    --primary-foreground: 0 0% 0%; /* Black Text for Yellow Button */
+    --secondary: 0 0% 7%; /* #121212 */
+    --secondary-foreground: 0 0% 93.3%; /* #EEEEEE */
+    --muted: 0 0% 33.3%; /* #555555 */
+    --muted-foreground: 0 0% 70%; /* #B3B3B3 */
+    --accent: 0 0% 16.5%; /* #2A2A2A */
+    --accent-foreground: 0 0% 98%;
+    --destructive: 4 72% 51%; /* #E74C3C */
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 20%; /* #333333 */
+    --input: 0 0% 20%;
+    --ring: 48 100% 50%;
+    --radius: 1rem;
+
+    /* Custom colors from design system */
+    --success: 158 100% 38%; /* #00C074 */
+    --info: 210 14% 63%; /* #A0A0A0 */
+
+    /* Dynamic Visual Settings */
+    --font-size-base: 16px;
+    --font-family: 'Inter', sans-serif;
+    --line-height: 1.5;
+    --letter-spacing: 0em;
+
+    /* Button Gradients */
+    --grad-green-start: 140 70% 45%;
+    --grad-green-end: 150 60% 50%;
+    --grad-blue-start: 206 98% 52%;
+    --grad-blue-end: 187 100% 44%;
+    --grad-purple-start: 262 88% 59%;
+    --grad-purple-end: 322 84% 55%;
+    --grad-yellow-start: 51 98% 50%;
+    --grad-yellow-end: 14 100% 59%;
+    --grad-cyan-start: 187 100% 44%;
+    --grad-cyan-end: 206 98% 52%;
+    --grad-gold-start: 45 98% 50%;
+    --grad-gold-end: 33 100% 50%;
+    --grad-destructive-start: 0 84.2% 60.2%;
+    --grad-destructive-end: 346 84% 60%;
+    --grad-default-start: 215.4 16.3% 46.9%;
+    --grad-default-end: 222.2 47.4% 11.2%;
+  }
+
+  .dark {
+    /* Base dark theme is now the root */
+  }
+
+  .light {
+    /* Keeping a light theme definition for completeness, though unused */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 48 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 48 100% 50%;
+  }
+}
+
+@layer base {
+  html {
+    font-size: var(--font-size-base);
+  }
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-family);
+    line-height: var(--line-height);
+    letter-spacing: var(--letter-spacing);
+  }
+  
+  .glassmorphic {
+    background-color: hsl(var(--accent) / 0.6);
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+    @apply border border-white/10 shadow-lg;
+  }
+  
+  .interactive-card:hover {
+    box-shadow: 0 0 20px 5px hsl(var(--primary) / 0.2);
+  }
+
+  .header-glassmorphic {
+     background-color: hsl(var(--background));
+     border-bottom-color: hsl(var(--border));
+  }
+  
+  .gradient-text {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-primary to-yellow-300;
+  }
+}
+
+/* Custom invisible but functional scrollbar */
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: none;
+}
+
+.custom-glow-purple:hover { box-shadow: 0 0 15px 3px hsl(var(--grad-purple-start)/0.6); }
+.custom-glow-blue:hover { box-shadow: 0 0 15px 3px hsl(var(--grad-blue-start)/0.6); }
+.custom-glow-green:hover { box-shadow: 0 0 15px 3px hsl(var(--grad-green-start)/0.6); }
+.custom-glow-orange:hover { box-shadow: 0 0 15px 3px hsl(var(--grad-orange-start)/0.6); }
+.custom-glow-red:hover { box-shadow: 0 0 15px 3px hsl(var(--grad-destructive-start)/0.6); }
+.custom-glow-yellow:hover { box-shadow: 0 0 15px 3px hsl(var(--grad-yellow-start)/0.6); }
+.custom-glow-cyan:hover { box-shadow: 0 0 15px 3px hsl(var(--grad-cyan-start)/0.6); }
+.custom-glow-gold:hover { box-shadow: 0 0 15px 3px hsl(var(--grad-gold-start)/0.6); }
+.custom-glow-default:hover { box-shadow: 0 0 15px 3px hsl(var(--grad-default-start)/0.6); }

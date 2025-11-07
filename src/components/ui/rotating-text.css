@@ -1,0 +1,54 @@
+
+
+.fade-in {
+  animation: fadeIn 1.5s ease-in-out;
+  opacity: 1;
+}
+
+.fade-out {
+  animation: fadeOut 1.5s ease-in-out;
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Base styles for the content type prefix */
+.content-type-prefix {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    line-height: 1rem;
+}
+
+.highlight-quote .content-type-prefix { 
+    background-color: hsla(217, 91%, 60%, 0.2); 
+    color: hsl(217, 91%, 80%);
+}
+.highlight-quote { @apply bg-transparent; }
+
+.highlight-advice .content-type-prefix { 
+    background-color: hsla(262, 88%, 59%, 0.2); 
+    color: hsl(262, 88%, 80%);
+}
+.highlight-advice { @apply bg-transparent; }
+
+.highlight-tip .content-type-prefix { 
+    background-color: hsla(51, 98%, 50%, 0.2); 
+    color: hsl(51, 98%, 70%);
+}
+.highlight-tip { @apply bg-transparent; }
+
+.highlight-note .content-type-prefix { 
+    background-color: hsla(215, 20%, 65%, 0.2); 
+    color: hsl(215, 20%, 85%);
+}
+.highlight-note { @apply bg-transparent; }
